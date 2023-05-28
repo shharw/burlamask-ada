@@ -5,7 +5,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - '3000:5000'
     depends_on:
       - db
   frontend:
@@ -13,7 +13,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - '8000:8000'
+      - '8000:3000'
   db:
     image: postgres
     environment:
@@ -22,7 +22,7 @@ services:
       POSTGRES_DB: your_database_name
     ports:
       - '5432:5432'
-  python:
-    build:
-      context: ./python
-      dockerfile: Dockerfile
+    #python:
+      #build:
+      #context: ./python
+      #dockerfile: Dockerfile
