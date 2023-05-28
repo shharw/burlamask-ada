@@ -1,28 +1,38 @@
-version: '3'
+version: '3.8'
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     ports:
-      - '3000:5000'
+      - "3000:5000"
     depends_on:
-      - db
+      - database
+
+  database:
+    image: postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     ports:
-      - '8000:3000'
-  db:
-    image: postgres
-    environment:
-      POSTGRES_USER: your_username
-      POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: your_database_name
-    ports:
-      - '5432:5432'
-    #python:
-      #build:
-      #context: ./python
-      #dockerfile: Dockerfile
+      - "8000:3000"
+
+#  python:
+#    image: python:3
+#    volumes:
+#      - ./python:/app
+volumes:
+  pgdata:
