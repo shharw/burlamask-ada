@@ -6,8 +6,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 
-@Entity({ name: 'image_link' })
-export class ImageLinkEntity {
+@Entity({ name: 'image' })
+export class ImageEntity {
   @ApiProperty({
     example: 'b20649d2-9853-4add-a968-4f144064340b',
     description: 'Identifier',
