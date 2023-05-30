@@ -21,9 +21,10 @@ export class GoogleDriveService {
   async uploadImageToDrive(
     photo: Readable,
     photoName: string,
+    mimetype: string,
   ): Promise<string> {
     const media = {
-      mimeType: 'image/jpeg',
+      mimeType: mimetype,
       body: photo,
     };
     const res = await this.drive.files.create({
