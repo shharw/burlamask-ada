@@ -39,35 +39,29 @@ export class ApiService {
 
   async generateImages(images: Array<Express.Multer.File>): Promise<any> {
     const imagePairs = await this.findImagePairs(images);
-    const response = [{}];
+    const response = [];
     for (const imagePair of imagePairs) {
       const res = await this.sendImagesForSwap(imagePair);
       const swappedImage = res[0];
-      const formData = new FormData();
       const imageContent = Readable.from(swappedImage.data);
       const imageName = Math.floor(100000 + Math.random() * 900000).toString();
       const imageEntity: ImageEntity = await this.imageEntityRepository.create({
         description: '',
         name: imageName,
       });
-      this.googleDriveService
+      await this.googleDriveService
           .uploadImageToDrive(imageContent, imageName, swappedImage.header)
           .then((resp) => {
             imageEntity.link = resp.link;
             imageEntity.googleDriveId = resp.id;
-            this.imageEntityRepository.save(imageEntity);
           });
       await this.imageEntityRepository.save(imageEntity);
-      formData.append('files', imageContent, {
-        filename: imageName,
-        contentType: swappedImage.header,
-      });
       response.push({
         id: imageEntity.id,
-        image: imageContent,
-        formData,
+        link: `https://drive.google.com/uc?export=view&id=${imageEntity.googleDriveId}`
       });
     }
+    console.log(response)
     return response;
   }
 
