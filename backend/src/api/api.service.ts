@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ImageEntity } from './entities/image.entity';
-import { Readable } from 'stream';
 import { GoogleDriveService } from './google-drive.service';
 import { HttpService } from '@nestjs/axios';
+import { AxiosRequestConfig } from 'axios/';
+import * as FormData from 'form-data';
+import { Readable } from 'stream';
 
 @Injectable()
 export class ApiService {
@@ -37,20 +39,21 @@ export class ApiService {
   async sendImagesForSwap(images: Express.Multer.File[]): Promise<any> {
     const formData = new FormData();
     for (const image of images) {
-      const blob = new Blob([image.buffer], { type: image.mimetype });
-      const file = new File([blob], image.originalname);
-      formData.append('files', file);
+      formData.append('image', image.buffer, {
+        filename: image.originalname,
+        contentType: image.mimetype,
+      });
     }
-
     try {
-      const response = await this.httpService.post(
-        'https://localhost:8000/uploadfiles',
-        formData,
-      );
-      return response;
+      const requestConfig: AxiosRequestConfig = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+      this.httpService
+        .post('https://localhost:8000/uploadfiles', formData, requestConfig)
+        .subscribe((response) => console.log(response.data));
     } catch (error) {
-      // Handle error
-      console.error('Error sending images:', error);
       throw error;
     }
   }
