@@ -8,6 +8,7 @@ import { AxiosRequestConfig } from 'axios/';
 import * as FormData from 'form-data';
 import { Readable } from 'stream';
 import { lastValueFrom, map } from 'rxjs';
+import * as fs from 'fs';
 
 @Injectable()
 export class ApiService {
@@ -25,38 +26,52 @@ export class ApiService {
     return image.link;
   }
 
-  async generateImages(images: Array<Express.Multer.File>): Promise<any> {
-    const swappedImages = await this.sendImagesForSwap(images);
-    // const response = [{}];
-    // const formData = new FormData();
-    // for (const image of swappedImages) {
-    //   const imageContent = Readable.from(image.data);
-    //   const imageName = Math.floor(100000 + Math.random() * 900000).toString();
-    //   const imageEntity: ImageEntity = await this.imageEntityRepository.create({
-    //     description: '',
-    //     name: imageName,
-    //   });
-    //   this.googleDriveService
-    //     .uploadImageToDrive(imageContent, imageName, image.header)
-    //     .then((resp) => {
-    //       imageEntity.link = resp.link;
-    //       imageEntity.googleDriveId = resp.id;
-    //       this.imageEntityRepository.save(imageEntity);
-    //     });
-    //   await this.imageEntityRepository.save(imageEntity);
-    //   formData.append('files', imageContent, {
-    //     filename: imageName,
-    //     contentType: image.header,
-    //   });
-    //   response.push({
-    //     id: imageEntity.id,
-    //     image: imageContent,
-    //   });
-    // }
-    // return response;
+  async findImagePairs(imageArray): Promise<Express.Multer.File[][]>{
+    const pairs: Express.Multer.File[][] = [];
+    for (let i = 0; i < imageArray.length; i++) {
+      for (let j = i + 1; j < imageArray.length; j++) {
+        pairs.push([imageArray[i], imageArray[j]]);
+        pairs.push([imageArray[j], imageArray[i]]);
+      }
+    }
+    return pairs;
   }
 
-  async sendImagesForSwap(images: Express.Multer.File[]): Promise<any> {
+  async generateImages(images: Array<Express.Multer.File>): Promise<any> {
+    const imagePairs = await this.findImagePairs(images);
+    const response = [{}];
+    for (const imagePair of imagePairs) {
+      const res = await this.sendImagesForSwap(imagePair);
+      const swappedImage = res[0];
+      const formData = new FormData();
+      const imageContent = Readable.from(swappedImage.data);
+      const imageName = Math.floor(100000 + Math.random() * 900000).toString();
+      const imageEntity: ImageEntity = await this.imageEntityRepository.create({
+        description: '',
+        name: imageName,
+      });
+      this.googleDriveService
+          .uploadImageToDrive(imageContent, imageName, swappedImage.header)
+          .then((resp) => {
+            imageEntity.link = resp.link;
+            imageEntity.googleDriveId = resp.id;
+            this.imageEntityRepository.save(imageEntity);
+          });
+      await this.imageEntityRepository.save(imageEntity);
+      formData.append('files', imageContent, {
+        filename: imageName,
+        contentType: swappedImage.header,
+      });
+      response.push({
+        id: imageEntity.id,
+        image: imageContent,
+        formData,
+      });
+    }
+    return response;
+  }
+
+  async sendImagesForSwap(images: Array<Express.Multer.File>): Promise<any> {
     const formData = new FormData();
     for (const image of images) {
       formData.append('files', image.buffer, {
@@ -66,9 +81,6 @@ export class ApiService {
     }
     try {
       const requestConfig: AxiosRequestConfig = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
         responseType: 'arraybuffer',
       };
       const response = await lastValueFrom(
@@ -76,8 +88,7 @@ export class ApiService {
           .post('http://python:4000/uploadfiles', formData, requestConfig)
           .pipe(
             map((res) => {
-              console.log(res.data);
-              // return [{ data: res.data, headers: res.headers['content-type'] }];
+              return [{ data: res.data, headers: res.headers['content-type'] }];
             }),
           ),
       );
