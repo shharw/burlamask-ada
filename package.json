@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@nestjs/common": "^9.4.2",
+    "axios": "^1.4.0"
+  }
+}

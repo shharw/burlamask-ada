@@ -16,7 +16,7 @@ class Item(BaseModel):
 
 def save_uploaded_file(file):
     file_name = file.filename
-    file_path = f"images/{file_name}"
+    file_path = f"/app/data/{file_name}"
     with open(file_path, "wb") as f:
         f.write(file.file.read())
 
@@ -30,21 +30,21 @@ async def create_upload_file(files: list[UploadFile]):
     # print(type(img2))
     for file in files:
         save_uploaded_file(file)
-    images_lst = [f"images/{file.filename}" for file in files]
+    images_lst = [f"/app/data/{file.filename}" for file in files]
     res = swap_face(images_lst[0], images_lst[1])
     # cv2.imshow("seamlessclone", res)
-    cv2.imwrite("images/res.jpg", res)
+    cv2.imwrite("/app/data/res.jpg", res)
     #
     # print(type(res.tobytes()))
 
     # return {"filename": [file.filename for file in files],
     #         "type": [file.content_type for file in files]}
-    return FileResponse("images/res.jpg", media_type="image/jpeg")
+    return FileResponse("/app/data/res.jpg", media_type="image/jpeg")
 
 @app.post("/upload_photo")
 async def upload_photo(file: UploadFile):
     file_name = file.filename
-    file_path = f"images/{file_name}"  # Specify the directory where you want to save the photos
+    file_path = f"/app/data/{file_name}"  # Specify the directory where you want to save the photos
     print(file.content_type)
     with open(file_path, "wb") as f:
         f.write(file.file.read())
