@@ -17,13 +17,14 @@ export class ApiService {
     private readonly httpService: HttpService,
   ) {}
   async generateImages(images: Array<Express.Multer.File>) {
-    // const swappedImages = await this.sendImagesForSwap(images);
+    const swappedImages = await this.sendImagesForSwap(images);
     const response = [];
-    for (const image of images) {
+    for (const image of swappedImages) {
       const imageContent = Readable.from(image.buffer);
       const imageLink = await this.googleDriveService.uploadImageToDrive(
         imageContent,
         image.originalname,
+        image.mimetype,
       );
       const imageEntity: ImageEntity = await this.imageEntityRepository.create({
         description: '',
@@ -52,7 +53,9 @@ export class ApiService {
       };
       this.httpService
         .post('https://localhost:8000/uploadfiles', formData, requestConfig)
-        .subscribe((response) => console.log(response.data));
+        .subscribe((response) => {
+          return response.data;
+        });
     } catch (error) {
       throw error;
     }
