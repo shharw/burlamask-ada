@@ -3,6 +3,7 @@ from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse, FileResponse
 from demo import swap_face
+from itertools import permutations
 
 app = FastAPI()
 
@@ -17,29 +18,39 @@ class Item(BaseModel):
 def save_uploaded_file(file):
     file_name = file.filename
     file_path = f"/app/data/{file_name}"
+    # file_path = f"{file_name}"
     with open(file_path, "wb") as f:
         f.write(file.file.read())
 
 
 @app.post("/uploadfiles/")
 async def create_upload_file(files: list[UploadFile]):
-    # img1, img2 = (file.file.read() for file in files)
-    # print(len(files))
-    # print(type(files[0].file.read()))
-    # print(type(img1))
-    # print(type(img2))
+    location = "/app/data/"
+    # location = ""
     for file in files:
         save_uploaded_file(file)
-    images_lst = [f"/app/data/{file.filename}" for file in files]
-    res = swap_face(images_lst[0], images_lst[1])
-    # cv2.imshow("seamlessclone", res)
-    cv2.imwrite("/app/data/res.jpg", res)
-    #
+
+    images_list = [f"{location}{file.filename}" for file in files]
+    images_list = list(permutations([f"{location}{file.filename}" for file in files], 2))
+    swapped_images = []
+    for i, pair in enumerate(images_list, start=1):
+        swapped_img = swap_face(*pair)
+        path_to_swapped_img = f"{location}res_{i}.jpg"
+        swapped_images.append(path_to_swapped_img)
+        cv2.imwrite(path_to_swapped_img, swapped_img)
+
     # print(type(res.tobytes()))
 
     # return {"filename": [file.filename for file in files],
     #         "type": [file.content_type for file in files]}
-    return FileResponse("/app/data/res.jpg", media_type="image/jpeg")
+    # return FileResponse(path_to_swapped_img, media_type="image/jpeg")
+    file_responses = []
+    for file in swapped_images:
+        # Create a FileResponse object for each image
+        file_responses.append(FileResponse(file, media_type="image/jpeg"))
+
+        # Return the list of FileResponse objects
+    return file_responses
 
 @app.post("/upload_photo")
 async def upload_photo(file: UploadFile):
@@ -50,6 +61,7 @@ async def upload_photo(file: UploadFile):
         f.write(file.file.read())
 
     return {"message": "Photo uploaded successfully!"}
+
 
 @app.get("/")
 async def main():

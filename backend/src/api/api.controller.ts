@@ -1,5 +1,7 @@
 import {
   Controller,
+  Get,
+  Param,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -16,8 +18,18 @@ export class ApiController {
   @ApiOperation({ summary: 'Generate images with swapped faces' })
   @ApiResponse({ status: 201 })
   @Post('generate')
-  @UseInterceptors(FilesInterceptor('photo'))
-  generateImages(@UploadedFiles() photos: Array<Express.Multer.File>) {
-    return this.apiService.generateImages(photos);
+  @UseInterceptors(FilesInterceptor('files'))
+  generateImages(
+    @UploadedFiles() images: Array<Express.Multer.File>,
+  ): Promise<any> {
+    return this.apiService.generateImages(images);
+  }
+
+  @ApiOperation({ summary: 'Get image link' })
+  @ApiResponse({ status: 200, type: String })
+  @Get('image-link')
+  @Get(':id')
+  getLink(@Param('id') id: string): Promise<any> {
+    return this.apiService.getLink(id);
   }
 }

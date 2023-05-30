@@ -22,7 +22,7 @@ export class GoogleDriveService {
     photo: Readable,
     photoName: string,
     mimetype: string,
-  ): Promise<string> {
+  ): Promise<any> {
     const media = {
       mimeType: mimetype,
       body: photo,
@@ -34,7 +34,8 @@ export class GoogleDriveService {
       },
       media: media,
     });
-    return await this.getFileLink(res.data.id);
+    const link = await this.getFileLink(res.data.id);
+    return { link, id: res.data.id };
   }
 
   async getFileLink(fileId: string) {
