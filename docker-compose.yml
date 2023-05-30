@@ -10,11 +10,13 @@ services:
     environment:
       POSTGRES_USER: burlamask
       POSTGRES_PASSWORD: 37uFz7O3
+      GOOGLE_APPLICATION_CREDENTIALS: /../../burlamask-ada-6e214da98fe3.json
+      GOOGLE_FOLDER_ID: 1j-QnGuiz4qQNV0Gbsulx_H6QfAYfDG82
+      NODE_OPTIONS: --max_old_space_size=4096
     ports:
       - "3000:5000"
     depends_on:
       - database
-
   database:
     image: postgres
     restart: always
