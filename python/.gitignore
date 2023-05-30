@@ -28,5 +28,3 @@ venv/
 # Other
 *.swp
 .DS_Store
-/data
-
