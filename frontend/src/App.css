@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,52 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+.content{
+  padding: 0 200px;
+  /* background-color: rgb(229, 229, 229); */
+}
+
+header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 150px;
+}
+
+.logo{
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  font-size: 29px;
+}
+
+.logo > img{
+  height: 120px;
+}
+
+input{
+  height: 30px;
+  width: 230px;
+}
+
+.search-bar {
+  position: relative;
+}
+
+.search-bar-icon{
+  position: absolute;
+  top: 25%;
+  right: 3%;
+  font-size: 20px;
+}
+
+.upload-buttons{
+  /* background-color: red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
 }
