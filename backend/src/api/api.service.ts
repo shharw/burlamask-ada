@@ -7,6 +7,7 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios/';
 import * as FormData from 'form-data';
 import { Readable } from 'stream';
+import { map, tap } from 'rxjs';
 
 @Injectable()
 export class ApiService {
@@ -19,28 +20,37 @@ export class ApiService {
   async generateImages(images: Array<Express.Multer.File>) {
     const swappedImages = await this.sendImagesForSwap(images);
     const response = [];
-    for (const image of swappedImages) {
-      const imageContent = Readable.from(image.buffer);
-      const imageLink = await this.googleDriveService.uploadImageToDrive(
-        imageContent,
-        image.originalname,
-        image.mimetype,
-      );
-      const imageEntity: ImageEntity = await this.imageEntityRepository.create({
-        description: '',
-        name: image.originalname,
-        link: imageLink,
-      });
-      await this.imageEntityRepository.save(imageEntity);
-      response.push({ id: imageEntity.id, photo: image });
-    }
+    swappedImages.forEach((val) => console.log(val));
+    // const imageContent = Readable.from(swappedImages.data);
+    // const imageLink = await this.googleDriveService.uploadImageToDrive(
+    //   imageContent,
+    //   images[0].originalname,
+    //   images[0].mimetype,
+    // );
+    // response.push(imageLink);
+    //
+    // for (const image of swappedImages) {
+    //   const imageContent = Readable.from(image.buffer);
+    //   const imageLink = await this.googleDriveService.uploadImageToDrive(
+    //     imageContent,
+    //     image.originalname,
+    //     image.mimetype,
+    //   );
+    //   const imageEntity: ImageEntity = await this.imageEntityRepository.create({
+    //     description: '',
+    //     name: image.originalname,
+    //     link: imageLink,
+    //   });
+    //   await this.imageEntityRepository.save(imageEntity);
+    //   response.push({ id: imageEntity.id, photo: image });
+    // }
     return response;
   }
 
   async sendImagesForSwap(images: Express.Multer.File[]): Promise<any> {
     const formData = new FormData();
     for (const image of images) {
-      formData.append('image', image.buffer, {
+      formData.append('files', image.buffer, {
         filename: image.originalname,
         contentType: image.mimetype,
       });
@@ -51,11 +61,16 @@ export class ApiService {
           'Content-Type': 'multipart/form-data',
         },
       };
-      this.httpService
-        .post('https://localhost:8000/uploadfiles', formData, requestConfig)
-        .subscribe((response) => {
-          return response.data;
-        });
+      const response = await this.httpService
+        .post('http://python:4000/uploadfiles', formData, requestConfig)
+        .pipe(
+          tap((resp) => console.log(resp)),
+          map((resp) => resp.data),
+          tap((data) => {
+            return data;
+          }),
+        );
+      return response;
     } catch (error) {
       throw error;
     }
