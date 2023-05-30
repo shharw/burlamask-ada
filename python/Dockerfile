@@ -1,12 +1,14 @@
-FROM python:3.9
+FROM python:3.10
 
-WORKDIR /app
+COPY requirements.txt ./requirements.txt
 
-COPY requirements.txt .
+RUN apt-get update && apt-get install -y cmake
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+EXPOSE 4000
+
 COPY . .
 
-# Specify the command to run the application
-CMD ["python", "test.py"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "4000"]
+

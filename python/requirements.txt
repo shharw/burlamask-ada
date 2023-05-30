@@ -1,0 +1,7 @@
+uvicorn==0.22.0
+cmake==3.26.3
+fastapi==0.95.2
+numpy==1.22.3
+opencv_python==4.7.0.72
+pydantic==1.10.8
+dlib==19.24.1

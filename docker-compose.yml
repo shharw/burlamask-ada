@@ -46,9 +46,15 @@ services:
     ports:
       - "8000:3000"
 
-#  python:
-#    image: python:3
-#    volumes:
-#      - ./python:/app
+  python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    volumes:
+      - ./python:/app
+    # - /app/node_modules
+    ports:
+      - "4000:4000"
+
 volumes:
   pgdata:
