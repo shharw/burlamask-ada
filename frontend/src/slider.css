@@ -1,10 +1,10 @@
 .image{
-    /* height: 500px; */
+    height: 350px;
 }
 
 .image > img{
-    width: 300px;
-    height: 360px;
+    height: 100%;
+    margin: 0 auto;
 }
 
 .slick-prev:before, .slick-next:before{
@@ -12,12 +12,31 @@
 }
 
 .slick-dots{
-    bottom: -30px;
+    /* bottom: -30px; */
 }
 
 .slider{
-    padding: 20px 100px;
+   height: 100%;
+   width: 50%;
+   margin: 0 auto;
+}
+
+.slick-slide {
     margin: 20px 0;
 }
 
+.button-url{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.button-url > button{
+    margin: 15px 30px;
+    padding: 10px 40px;
+    font-size: 25px;
+    background-color: bisque;
+    border-radius: 30px;
+    border: 2px black solid;
+    cursor: pointer;
+}
