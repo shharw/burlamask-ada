@@ -5,10 +5,16 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 
 function App() {
+
+  const [images, setImages] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]);
+  const [response, setResponse] = useState([]);
+
   const handleApi = () => {
     console.log(imageURLs);
     console.log(images);
 
+    const res = [];
     const formData = new FormData();
     images.forEach(img => formData.append('files', img))
 
@@ -23,18 +29,20 @@ function App() {
           'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*'
         },
-      }; 
+      };
       axios.post('http://localhost:3000/api/generate', formData, requestConfig).then((response) => {
-        console.log(response.data);
-        return response.data;
+        // console.log(response.data[0].link);
+        // return response.data;
+        response.data.forEach(img => {
+          res.push(img.link);
         });
+        setResponse(res);
+        console.log(res);
+      });
     } catch (error) {
       throw error;
     }
   }
-
-  const [images, setImages] = useState([]);
-  const [imageURLs, setImageURLs] = useState([]);
 
   useEffect(() => {
     if (images.length < 1) return;
@@ -48,28 +56,28 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <div className='content'>
-        <header>
-          <div className='logo'>
-            <img src='https://static.vecteezy.com/system/resources/previews/009/890/267/original/cartoon-drawing-of-clown-character-free-png.png'></img>
-            <div className='name'>BurlaMask</div>
+      <div className="App">
+        <div className='content'>
+          <header>
+            <div className='logo'>
+              <img src='https://static.vecteezy.com/system/resources/previews/009/890/267/original/cartoon-drawing-of-clown-character-free-png.png'></img>
+              <div className='name'>BurlaMask</div>
+            </div>
+            <form className='search-bar'>
+              <input type='text' placeholder='Search by description' />
+              <AiOutlineSearch className='search-bar-icon'></AiOutlineSearch>
+            </form>
+          </header>
+          {imageURLs.length ?
+              <Slider imageURLs={imageURLs}></Slider>
+              : <div className='defaulf'>Upload al least 2 photos</div>}
+          <div className='upload-buttons'>
+            <input type="file" multiple accept="image/*" onChange={onImageChange} />
+            <button className='swap' onClick={handleApi}>SWAP</button>
           </div>
-          <form className='search-bar'>
-            <input type='text' placeholder='Search by description' />
-            <AiOutlineSearch className='search-bar-icon'></AiOutlineSearch>
-          </form>
-        </header>
-        <Slider
-          imageURLs={imageURLs}
-        ></Slider>
-        <div className='upload-buttons'>
-          <input type="file" multiple accept="image/*" onChange={onImageChange} />
-          <button onClick={handleApi}>Submit</button>
+          <Slider imageURLs={response}></Slider>
         </div>
-        {/* <Slider></Slider> */}
       </div>
-    </div>
   );
 }
 
