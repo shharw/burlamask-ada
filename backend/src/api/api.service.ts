@@ -39,7 +39,7 @@ export class ApiService {
 
   async generateImages(images: Array<Express.Multer.File>): Promise<any> {
     const imagePairs = await this.findImagePairs(images);
-    const response = [];
+    const response = [];git
     for (const imagePair of imagePairs) {
       const res = await this.sendImagesForSwap(imagePair);
       const swappedImage = res[0];

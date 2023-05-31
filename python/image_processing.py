@@ -12,18 +12,11 @@ def extract_index_nparray(nparray):
 
 
 def swap_face(image1, image2):
-    # img = cv2.imread("images/1.jpg")
-    # img = cv2.imread(image1)
-    # nparr = np.frombuffer(image1, np.uint8)
-    print(f"SWAP IMG1{image1}")
-    # print(nparr)
-    # img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     img = cv2.imread(image1)
-    print(type(img))
-    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSss")
+    # nparr = np.frombuffer(image1, np.uint8)
+    # img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     mask = np.zeros_like(img_gray)
-    # img2 = cv2.imread("images/M.jpg")
     img2 = cv2.imread(image2)
     # nparr = np.frombuffer(image2, np.uint8)
     # img2 = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -49,12 +42,9 @@ def swap_face(image1, image2):
 
         points = np.array(landmarks_points, np.int32)
         convexhull = cv2.convexHull(points)
-        # cv2.polylines(img, [convexhull], True, (255, 0, 0), 3)
         cv2.fillConvexPoly(mask, convexhull, 255)
 
         face_image_1 = cv2.bitwise_and(img, img, mask=mask)
-        # cv2.imshow("faces", img)
-        # Delaunay triangulation
         rect = cv2.boundingRect(convexhull)
         subdiv = cv2.Subdiv2D(rect)
         subdiv.insert(landmarks_points)
