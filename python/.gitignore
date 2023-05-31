@@ -4,6 +4,9 @@ venv/
 *.env
 *.venv
 
+*.jpg
+.jpeg
+
 # FastAPI
 /.env
 /.vscode

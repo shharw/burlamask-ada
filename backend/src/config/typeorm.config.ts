@@ -13,6 +13,7 @@ export const typeOrmConfig: DataSourceOptions = {
   migrations: [__dirname + '/../migrations/*{.js,.ts}'],
   migrationsTableName: 'migrations',
   migrationsRun: true,
+  synchronize: true,
 };
 
 export default new DataSource(typeOrmConfig);

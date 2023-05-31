@@ -1,0 +1,23 @@
+.image{
+    /* height: 500px; */
+}
+
+.image > img{
+    width: 300px;
+    height: 360px;
+}
+
+.slick-prev:before, .slick-next:before{
+    color: black;
+}
+
+.slick-dots{
+    bottom: -30px;
+}
+
+.slider{
+    padding: 20px 100px;
+    margin: 20px 0;
+}
+
+
