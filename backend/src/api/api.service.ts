@@ -31,7 +31,7 @@ export class ApiService {
     //
     // for (const image of swappedImages) {
     //   const imageContent = Readable.from(image.buffer);
-    //   const imageLink = await this.googleDriveService.uploadImageToDrive(
+    //   const imageLingitk = await this.googleDriveService.uploadImageToDrive(
     //     imageContent,
     //     image.originalname,
     //     image.mimetype,
