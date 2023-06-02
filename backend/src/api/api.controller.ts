@@ -27,8 +27,7 @@ export class ApiController {
 
   @ApiOperation({ summary: 'Get image link' })
   @ApiResponse({ status: 200, type: String })
-  @Get('image-link')
-  @Get(':id')
+  @Get('image-link/:id')
   getLink(@Param('id') id: string): Promise<any> {
     return this.apiService.getLink(id);
   }

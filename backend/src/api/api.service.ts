@@ -39,7 +39,7 @@ export class ApiService {
 
   async generateImages(images: Array<Express.Multer.File>): Promise<any> {
     const imagePairs = await this.findImagePairs(images);
-    const response = [];git
+    const response = [];
     for (const imagePair of imagePairs) {
       const res = await this.sendImagesForSwap(imagePair);
       const swappedImage = res[0];
@@ -61,7 +61,6 @@ export class ApiService {
         link: `https://drive.google.com/uc?export=view&id=${imageEntity.googleDriveId}`
       });
     }
-    console.log(response)
     return response;
   }
 

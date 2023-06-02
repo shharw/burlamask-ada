@@ -34,5 +34,5 @@ async def create_upload_file(files: list[UploadFile]):
 
 @app.get("/")
 async def main():
-    content = "<h1>Hello world!</h1>"
+    content = "<h1>Hello burlamask!</h1>"
     return HTMLResponse(content=content)
